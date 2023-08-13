@@ -5,7 +5,7 @@ def generate_key_matrix(key_str, n):
     for i in range(n):
         for j in range(n):
             key_matrix[i][j] = ord(key_str[index]) % 65
-            index += 1
+        index += 1
     return key_matrix
 
 # Function to calculate the determinant of a 2x2 matrix
