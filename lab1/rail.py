@@ -1,80 +1,50 @@
-# Function to perform Rail Fence encryption
-def rail_fence_encrypt(plain_text, key):
-    encrypted_text = ""
-    rail = [['\n' for _ in range(len(plain_text))] for _ in range(key)]
-    direction = False
-    row, col = 0, 0
-    
-    for char in plain_text:
-        if row == 0 or row == key - 1:
-            direction = not direction
-        rail[row][col] = char
-        col += 1
-        
-        if direction:
-            row += 1
-        else:
-            row -= 1
-    
-    for i in range(key):
-        for j in range(len(plain_text)):
-            if rail[i][j] != '\n':
-                encrypted_text += rail[i][j]
-    
-    return encrypted_text
+def getCipher(text, rails):
+    ciphertext = ""
+    length_row = 0
+    extra_char = 0
 
-# Function to perform Rail Fence decryption
-def rail_fence_decrypt(cipher_text, key):
-    decrypted_text = ""
-    rail = [['\n' for _ in range(len(cipher_text))] for _ in range(key)]
-    direction = False
-    row, col = 0, 0
-    
-    for _ in range(len(cipher_text)):
-        if row == 0 or row == key - 1:
-            direction = not direction
-        rail[row][col] = '*'
-        col += 1
-        
-        if direction:
-            row += 1
-        else:
-            row -= 1
-    
-    index = 0
-    for i in range(key):
-        for j in range(len(cipher_text)):
-            if rail[i][j] == '*' and index < len(cipher_text):
-                rail[i][j] = cipher_text[index]
-                index += 1
-    
-    row, col = 0, 0
-    for _ in range(len(cipher_text)):
-        if row == 0 or row == key - 1:
-            direction = not direction
-        if rail[row][col] != '\n':
-            decrypted_text += rail[row][col]
-        col += 1
-        
-        if direction:
-            row += 1
-        else:
-            row -= 1
-    
-    return decrypted_text
+    # choosing in what interval a text is to be selected to arrange in a row.
+    for i in range(rails):
+        ctext = ""
+        for j in range(i, len(text), rails):
+            ctext += text[j]
 
-def main():
-    # Input your full name and key
-    full_name = input("Enter your full name: ")
-    key = int(input("Enter the encryption key: "))
+        if i == 0:
+            length_row = len(ctext)  # setting length of first row to add extra alphabets later in other rows to match dimension
 
-    # Encrypt the full name using Rail Fence cipher
-    encrypted_name = rail_fence_encrypt(full_name, key)
-    print("Encrypted Name:", encrypted_name)
+        if i != 0 and len(ctext) < length_row:
+            ctext += "X"  # adding extra alphabet
+            extra_char += 1
 
-    # Decrypt the encrypted name using Rail Fence cipher
-    decrypted_name = rail_fence_decrypt(encrypted_name, key)
-    print("Decrypted Name:", decrypted_name)
+        ciphertext += ctext # concatenating the finalised cipher part of a row into cipertext
 
-if __name__ == "__main__":
-    main()
+        print(ctext)
+
+    return ciphertext, extra_char
+
+
+# Decipher
+def getDecipher(text, rails):
+    deciphertext = ""
+    length = int(len(text) / rails)
+
+    # Outer loop runs through the length of columns
+    for i in range(0, length):
+        # Inner loop runs though the rows of columns
+        for j in range(0, rails):
+            deciphertext += text[length * j + i]  # formula to extract alphabets from correct positions.
+
+    return deciphertext
+
+
+# Input
+plain_text = input("Enter the plain text: ").upper().replace(" ", "")
+rails = int(input("Enter the rails: "))
+
+# Ciphered Text
+cipher_text, extra = getCipher(plain_text, rails)
+print("Ciphered Text: " + cipher_text)
+
+# Deciphered Text
+decipher_text = getDecipher(cipher_text, rails)
+print("Deciphered Text: " + decipher_text[:len(cipher_text)-extra])

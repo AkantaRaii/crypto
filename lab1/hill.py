@@ -1,86 +1,57 @@
-# Function to generate key matrix
-def generate_key_matrix(key_str, n):
-    key_matrix = [[0] * n for _ in range(n)]
-    index = 0
-    for i in range(n):
-        for j in range(n):
-            key_matrix[i][j] = ord(key_str[index]) % 65
-        index += 1
-    return key_matrix
+import numpy as np
 
-# Function to calculate the determinant of a 2x2 matrix
-def determinant(matrix):
-    return matrix[0][0] * matrix[1][1] - matrix[0][1] * matrix[1][0]
+# Functions
 
-# Function to calculate the inverse of a matrix modulo 26
-def inverse_matrix(matrix):
-    det = determinant(matrix)
-    det_inv = pow(det, -1, 26)
-    if det_inv == 0:
-        raise ValueError("Matrix is not invertible")
-    
-    inv_matrix = [[0] * len(matrix) for _ in range(len(matrix))]
-    for i in range(len(matrix)):
-        for j in range(len(matrix)):
-            cofactor = ((-1) ** (i + j)) * det_inv * determinant(minor(matrix, i, j))
-            inv_matrix[i][j] = int(cofactor) % 26
-    
-    return inv_matrix
+def cipherDecipher(text, key):
+    alphabets = [ord(char) - ord('A') for char in text]
+    n = len(key)
+    num_of_padding = (len(alphabets) % n)
+    alphabets += [1] * num_of_padding
 
-# Function to perform encryption
-def encrypt(plain_text, key_matrix):
-    n = len(key_matrix)
-    cipher_text = ""
-    for i in range(0, len(plain_text), n):
-        chunk = [ord(c) - 65 for c in plain_text[i:i + n]]
-        result = [0] * n
-        for row in range(n):
-            for col in range(n):
-                result[row] += key_matrix[row][col] * chunk[col]
-            result[row] %= 26
-        cipher_text += ''.join(chr(c + 65) for c in result)
-    return cipher_text
+    text=''
+    for i in range(0, len(alphabets), n):
+        block = alphabets[i : i + n]
+        product = np.dot(key, block) % 26
+        text += "".join(chr(65 + i) for i in product)
 
-# Function to perform decryption
-def decrypt(cipher_text, key_matrix):
-    n = len(key_matrix)
-    key_matrix_inv = inverse_matrix(key_matrix)
-    plain_text = ""
-    for i in range(0, len(cipher_text), n):
-        chunk = [ord(c) - 65 for c in cipher_text[i:i + n]]
-        result = [0] * n
-        for row in range(n):
-            for col in range(n):
-                result[row] += key_matrix_inv[row][col] * chunk[col]
-            result[row] %= 26
-        plain_text += ''.join(chr(c + 65) for c in result)
-    return plain_text
+    return text, num_of_padding
 
-# Function to calculate the minor of a matrix
-def minor(matrix, row, col):
-    return [[matrix[i][j] for j in range(len(matrix[i])) if j != col] for i in range(len(matrix)) if i != row]
+def inverseOfKey(key):
+    # Determinant
+    determinant = int(np.ceil(np.linalg.det(key) % 26))
 
-def main():
-    # Set the key and matrix size
-    key = "HILLKEY"
-    matrix_size = 3  # You can adjust this for different matrix sizes
+    #Finding 1/det 
+    for i in range(26):
+        if (determinant * i) % 26 == 1:
+            determinant = i
+            break
 
-    # Generate the key matrix
-    key_matrix = generate_key_matrix(key, matrix_size)
+    # Adjoint
+    adjKey = np.linalg.inv(key) * np.linalg.det(key)
 
-    # Input your full name
-    full_name = input("Enter your full name: ")
+    for index in range(len(adjKey)):
+        for col_index in range(len(adjKey)):
+            if adjKey[index][col_index] < 0:
+                adjKey[index][col_index] = np.ceil(adjKey[index][col_index] % 26)
 
-    # Ensure the full name can be mapped onto the matrix
-    full_name = full_name.upper().replace(" ", "")[:matrix_size**2]
+    adjKey = adjKey.astype(int)
 
-    # Encryption
-    encrypted_name = encrypt(full_name, key_matrix)
-    print("Encrypted Name:", encrypted_name)
+    return ((determinant * adjKey) % 26)
 
-    # Decryption
-    decrypted_name = decrypt(encrypted_name, key_matrix)
-    print("Decrypted Name:", decrypted_name)
 
-if __name__ == "__main__":
-    main()
+#Input Data
+
+plain_text = input("Enter the plain text: ").replace(" ", "").upper()
+
+key = np.array([[5, 8], [17, 3]])
+
+# Encryption
+cipher_text, paddings = cipherDecipher(plain_text, key)
+print("Cipher Text: " + cipher_text)
+
+#inverse of the key.
+inv_key = inverseOfKey(key)
+
+# Decryption
+decipher_text, temp = cipherDecipher(cipher_text, inv_key)
+print("Deciphered Text: " + decipher_text[:(len(cipher_text)-paddings)].lower()) #omiting the padded numbers

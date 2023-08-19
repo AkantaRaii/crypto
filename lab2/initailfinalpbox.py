@@ -22,11 +22,10 @@ def initail_final(data,p_box):
     for i in p_box:
         result.append(data[i-1])
     return ''.join(result)
-input_data = "0000000100100011010001010110011110001001101010111100110111101111"
+input_data ="1100000100100011010001010110011110001001101010111100110111101111"
 print("initail data:",input_data)
 final_data=initail_final(input_data,initail_p_box)
 print("final data is :",final_data)
 
-data="1100110000000000110011001111111111110000101010101111000010101010"
-inital_data=initail_final(data,final_p_box)
+inital_data=initail_final(final_data,final_p_box)
 print("converting same output to inital data :",inital_data)

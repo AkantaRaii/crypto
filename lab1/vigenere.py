@@ -1,51 +1,21 @@
-# Function to perform Vigenere encryption
-def vigenere_encrypt(plain_text, key):
-    encrypted_text = ""
-    key_length = len(key)
-    for i in range(len(plain_text)):
-        char = plain_text[i]
-        key_char = key[i % key_length]
-        if char.isalpha():
-            shift = ord(key_char.upper()) - ord('A')
-            if char.islower():
-                encrypted_char = chr((ord(char) - ord('a') + shift) % 26 + ord('a'))
-            else:
-                encrypted_char = chr((ord(char) - ord('A') + shift) % 26 + ord('A'))
-            encrypted_text += encrypted_char
-        else:
-            encrypted_text += char
-    return encrypted_text
+plain_text = input("Enter the plain text: ").replace(" ", "").upper()
 
-# Function to perform Vigenere decryption
-def vigenere_decrypt(cipher_text, key):
-    decrypted_text = ""
-    key_length = len(key)
-    for i in range(len(cipher_text)):
-        char = cipher_text[i]
-        key_char = key[i % key_length]
-        if char.isalpha():
-            shift = ord(key_char.upper()) - ord('A')
-            if char.islower():
-                decrypted_char = chr((ord(char) - ord('a') - shift) % 26 + ord('a'))
-            else:
-                decrypted_char = chr((ord(char) - ord('A') - shift) % 26 + ord('A'))
-            decrypted_text += decrypted_char
-        else:
-            decrypted_text += char
-    return decrypted_text
+alphabets = {chr(65 + i): i for i in range(26)}
+rev_alphabets = {val: key for key, val in alphabets.items()}
 
-def main():
-    # Input your full name and key
-    full_name = input("Enter your full name: ")
-    key = input("Enter the encryption key: ")
+key = input("Enter the key: ").replace(" ", "").upper()
+key = (key + key * int(len(plain_text) / len(key)))[: len(plain_text)]
 
-    # Encrypt the full name using Vigenere cipher
-    encrypted_name = vigenere_encrypt(full_name, key)
-    print("Encrypted Name:", encrypted_name)
+encrypted_text = decrypted_text = ""
 
-    # Decrypt the encrypted name using Vigenere cipher
-    decrypted_name = vigenere_decrypt(encrypted_name, key)
-    print("Decrypted Name:", decrypted_name)
+for char, keyChar in zip(plain_text, key):
+    encr = (alphabets[char] + alphabets[keyChar]) % 26
+    encrypted_text += rev_alphabets[encr]
 
-if __name__ == "__main__":
-    main()
+print("ciphered:",encrypted_text)
+
+for char, keyChar in zip(encrypted_text, key):
+    decr = (alphabets[char] - alphabets[keyChar]) % 26
+    decrypted_text += rev_alphabets[decr]
+
+print("decihpered:",decrypted_text)
