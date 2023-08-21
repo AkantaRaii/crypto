@@ -8,10 +8,10 @@ expansion_p_box = [
     24, 25, 26, 27, 28, 29,
     28, 29, 30, 31, 32, 1]
 def expansion(data,p_box):
-    result=[]
+    result=""
     for i in p_box:
-        result.append(data[i-1])
-    return "".join(result)
+        result+=data[i-1]
+    return result
 
 data="01111010000101111010000101111010"
 print("data:",data)

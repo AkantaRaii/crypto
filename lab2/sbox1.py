@@ -7,5 +7,5 @@ s_box_1 = [
 def subtitution(data,s_box):
     row=int(data[0]+data[5],2)
     col=int((data[1:5]),2)
-    return s_box_1[row][col]    
+    return s_box[row][col]    
 print("output:",format(subtitution('100011',s_box_1),'04b'))

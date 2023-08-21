@@ -18,10 +18,10 @@ final_p_box = [
     33, 1, 41, 9, 49, 17, 57, 25
 ]
 def initail_final(data,p_box):
-    result=[]
+    result=""
     for i in p_box:
-        result.append(data[i-1])
-    return ''.join(result)
+        result+=data[i-1]
+    return result
 input_data ="1100000100100011010001010110011110001001101010111100110111101111"
 print("initail data:",input_data)
 final_data=initail_final(input_data,initail_p_box)
