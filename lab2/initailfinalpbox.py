@@ -1,3 +1,4 @@
+import random as r
 initail_p_box = [
     58, 50, 42, 34, 26, 18, 10, 2,
     60, 52, 44, 36, 28, 20, 12, 4,
@@ -17,15 +18,22 @@ final_p_box = [
     34, 2, 42, 10, 50, 18, 58, 26,
     33, 1, 41, 9, 49, 17, 57, 25
 ]
+def generateInput():
+    input_block = ""
+    for _ in range(64):
+        input_block += str(r.randint(0,1))
+    return input_block
 def initail_final(data,p_box):
     result=""
     for i in p_box:
         result+=data[i-1]
     return result
-input_data ="1100000100100011010001010110011110001001101010111100110111101111"
+input_data=generateInput()
 print("initail data:",input_data)
 final_data=initail_final(input_data,initail_p_box)
 print("final data is :",final_data)
 
 inital_data=initail_final(final_data,final_p_box)
 print("converting same output to inital data :",inital_data)
+if input_data==inital_data:
+    print ("same")

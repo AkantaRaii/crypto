@@ -1,3 +1,4 @@
+import random as r
 parity_drop=[57, 49, 41, 33, 25, 17,  9,  1,
              58, 50, 42, 34, 26, 18, 10,  2,
              59, 51, 43, 35, 27, 19, 11,  3,
@@ -15,6 +16,11 @@ compression = [
     44, 49, 39, 56, 34, 53,
     46, 42, 50, 36, 29, 32
 ]
+# def generateInput():
+#     input_block = ""
+#     for _ in range(64):
+#         input_block += str(r.randint(0,1))
+#     return input_block
 round=1
 def des(data,paritydrop,compress,round):
     result=""
@@ -33,8 +39,20 @@ def des(data,paritydrop,compress,round):
         total_56=first_28+second_28
         for i in compress:
             result+=total_56[i-1]
-        print("round:",round,"=",result)
+        tem=""
+        # print("round",round,":",result)
+
+        print("round",round,":",end=" ")
+        for i,j in enumerate(result):
+            tem+=j
+            if (i+1)%4==0:
+                tem=int(tem,2)
+                print(hex(tem)[2:],end=" ")
+                tem=""
+        print("\n")
         round+=1
         
-data="1100110100000000110011001111111111110001101010101111000010101010"
+data="0110000101111011000110111000001111101111111000001010110010110110"
+# print(len(data))
+print("Note: key is in HEX")
 des(data,parity_drop,compression,round)
