@@ -1,6 +1,9 @@
 def miller_rabin(n,a):
+    
     if(n-1)%2==0:
         k=1
+    else:
+        return False
     if(n-1)%(2**k)==0:
         m=(n-1)/(2**k)
         t=(a**m)%n
